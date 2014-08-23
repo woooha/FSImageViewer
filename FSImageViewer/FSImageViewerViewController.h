@@ -52,7 +52,7 @@
 - (id)initWithImageSource:(id <FSImageSource>)imageSource imageIndex:(NSInteger)imageIndex;
 
 /// Image data source
-@property(strong, nonatomic, readonly) id <FSImageSource> imageSource;
+@property(strong, nonatomic) id <FSImageSource> imageSource;
 
 /// Title
 @property(strong, nonatomic) UIView<FSTitleView>* titleView;

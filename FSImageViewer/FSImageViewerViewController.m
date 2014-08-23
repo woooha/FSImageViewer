@@ -38,6 +38,8 @@
     UIBarButtonItem *shareButton;
 }
 
+@synthesize imageSource = _imageSource;
+
 - (id)initWithImageSource:(id <FSImageSource>)aImageSource {
     return [self initWithImageSource:aImageSource imageIndex:0];
 }
@@ -48,20 +50,27 @@
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(toggleBarsNotification:) name:kFSImageViewerToogleBarsNotificationKey object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(imageViewDidFinishLoading:) name:kFSImageViewerDidFinishedLoadingNotificationKey object:nil];
 
-        self.hidesBottomBarWhenPushed = YES;
-        self.wantsFullScreenLayout = YES;
-        
-        self.backgroundColorHidden = [UIColor blackColor];
-        self.backgroundColorVisible = [UIColor whiteColor];
+        [self initialize];
 
         _imageSource = aImageSource;
         pageIndex = imageIndex;
         currentPageIndex = imageIndex;
-        
-        self.sharingDisabled = NO;
-        self.showNumberOfItemsInTitle = YES;
     }
     return self;
+}
+
+- (void) initialize {
+
+    self.hidesBottomBarWhenPushed = YES;
+    self.wantsFullScreenLayout = YES;
+
+    self.backgroundColorHidden = [UIColor blackColor];
+    self.backgroundColorVisible = [UIColor whiteColor];
+
+
+
+    self.sharingDisabled = NO;
+    self.showNumberOfItemsInTitle = YES;
 }
 
 - (void)dealloc {
@@ -80,9 +89,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-	if ([self respondsToSelector:@selector(setAutomaticallyAdjustsScrollViewInsets:)]) {
-		self.automaticallyAdjustsScrollViewInsets = NO;
-	}
+    if ([self respondsToSelector:@selector(setAutomaticallyAdjustsScrollViewInsets:)]) {
+        self.automaticallyAdjustsScrollViewInsets = NO;
+    }
 
     self.view.backgroundColor = self.backgroundColorHidden;
 
@@ -199,15 +208,15 @@
 }
 
 - (void)done:(id)sender {
-	if ([_delegate respondsToSelector:@selector(imageViewerViewController:willDismissViewControllerAnimated:)]) {
-		[_delegate imageViewerViewController:self willDismissViewControllerAnimated:YES];
-	}
-	
+    if ([_delegate respondsToSelector:@selector(imageViewerViewController:willDismissViewControllerAnimated:)]) {
+        [_delegate imageViewerViewController:self willDismissViewControllerAnimated:YES];
+    }
+
     [self dismissViewControllerAnimated:YES completion:^{
-		if ([_delegate respondsToSelector:@selector(imageViewerViewController:didDismissViewControllerAnimated:)]) {
-			[_delegate imageViewerViewController:self didDismissViewControllerAnimated:YES];
-		}
-	}];
+        if ([_delegate respondsToSelector:@selector(imageViewerViewController:didDismissViewControllerAnimated:)]) {
+            [_delegate imageViewerViewController:self didDismissViewControllerAnimated:YES];
+        }
+    }];
 }
 
 - (void)share:(id)sender {
@@ -287,7 +296,7 @@
         NSAssert(centerIndex < _imageSource.numberOfImages, @"centerIndex is out of bounds");
         return;
     }
-    
+
     if ([[notification object][@"image"] isEqual:_imageSource[centerIndex]]) {
         if ([[notification object][@"failed"] boolValue]) {
             if (barsHidden) {
@@ -332,11 +341,11 @@
 
 - (void)moveToImageAtIndex:(NSInteger)index animated:(BOOL)animated {
     if (index < [self.imageSource numberOfImages] && index >= 0) {
-        
+
         BOOL sameIndex = (currentPageIndex == index);
         pageIndex = index;
         currentPageIndex = index;
-        
+
         [self setViewState];
 
         [self enqueueImageViewAtIndex:index];
@@ -361,10 +370,10 @@
         }
 
         if (index + 1 < [self.imageSource numberOfImages] && (NSNull *) [_imageViews objectAtIndex:(NSUInteger) (index + 1)] != [NSNull null]) {
-            [((FSImageView *) [self.imageViews objectAtIndex:(NSUInteger) (index + 1)]) killScrollViewZoom];
+            [((FSImageView *) [self.imageViews objectAtIndex:(NSUInteger) (index + 1)])killScrollViewZoom];
         }
         if (index - 1 >= 0 && (NSNull *) [self.imageViews objectAtIndex:(NSUInteger) (index - 1)] != [NSNull null]) {
-            [((FSImageView *) [self.imageViews objectAtIndex:(NSUInteger) (index - 1)]) killScrollViewZoom];
+            [((FSImageView *) [self.imageViews objectAtIndex:(NSUInteger) (index - 1)])killScrollViewZoom];
         }
     }
 
@@ -535,17 +544,17 @@
     if (bundle == nil)
     {
         NSString *bundlePath = [[NSBundle mainBundle] pathForResource:@"FSImageViewer" ofType:@"bundle"];
-        bundle = [NSBundle bundleWithPath:bundlePath] ?: [NSBundle mainBundle];
+        bundle = [NSBundle bundleWithPath:bundlePath] ? :[NSBundle mainBundle];
         for (NSString *language in [NSLocale preferredLanguages])
+        {
+            if ([[bundle localizations] containsObject:language])
             {
-                if ([[bundle localizations] containsObject:language])
-                {
-                    bundlePath = [bundle pathForResource:language ofType:@"lproj"];
-                    bundle = [NSBundle bundleWithPath:bundlePath];
-                    break;
-                }
+                bundlePath = [bundle pathForResource:language ofType:@"lproj"];
+                bundle = [NSBundle bundleWithPath:bundlePath];
+                break;
             }
         }
+    }
     defaultString = [bundle localizedStringForKey:key value:defaultString table:nil];
     return [[NSBundle mainBundle] localizedStringForKey:key value:defaultString table:nil];
 }

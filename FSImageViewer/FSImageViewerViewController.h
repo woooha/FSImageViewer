@@ -38,7 +38,7 @@
 
 - (void)imageViewerViewController:(FSImageViewerViewController *)imageViewerViewController willDismissViewControllerAnimated:(BOOL)animated;
 - (void)imageViewerViewController:(FSImageViewerViewController *)imageViewerViewController didDismissViewControllerAnimated:(BOOL)animated;
-
+- (BOOL)imageViewerViewController:(FSImageViewerViewController *)imageViewerViewController shouldHideBarsAnimated:(BOOL) animated;
 @end
 
 /// FSImageViewerViewController is an UIViewController which can present images.
@@ -81,6 +81,11 @@
 /// Used to add additional items to the "share" button
 @property(strong, nonatomic) NSArray* applicationActivities;
 
+@property(strong, nonatomic) UIBarButtonItem * advanceButton;
+
+@property(nonatomic) NSInteger imageIndex;
+
+@property (nonatomic) BOOL enableHideBars;
 /// Current index of the image displayed
 /// @return current index of the image displayed
 - (NSInteger)currentImageIndex;
@@ -89,5 +94,6 @@
 /// @param index index move to
 /// @param animated should the movevement animated
 - (void)moveToImageAtIndex:(NSInteger)index animated:(BOOL)animated;
+- (void)toggleBarsNotification:(NSNotification *)notification;
 
 @end

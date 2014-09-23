@@ -39,6 +39,18 @@
 }
 
 @synthesize imageSource = _imageSource;
+@synthesize advanceButton = shareButton;
+@synthesize imageIndex = pageIndex;
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+
+        pageIndex = 0;
+        currentPageIndex    = 0;
+        _imageSource = nil;
+    }
+    return self;
+}
 
 - (id)initWithImageSource:(id <FSImageSource>)aImageSource {
     return [self initWithImageSource:aImageSource imageIndex:0];
@@ -46,12 +58,7 @@
 
 - (id)initWithImageSource:(id <FSImageSource>)aImageSource imageIndex:(NSInteger)imageIndex {
     if ((self = [super init])) {
-
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(toggleBarsNotification:) name:kFSImageViewerToogleBarsNotificationKey object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(imageViewDidFinishLoading:) name:kFSImageViewerDidFinishedLoadingNotificationKey object:nil];
-
-        [self initialize];
-
+        //[self initialize];
         _imageSource = aImageSource;
         pageIndex = imageIndex;
         currentPageIndex = imageIndex;
@@ -65,12 +72,15 @@
     self.wantsFullScreenLayout = YES;
 
     self.backgroundColorHidden = [UIColor blackColor];
-    self.backgroundColorVisible = [UIColor whiteColor];
+    self.backgroundColorVisible = [UIColor blackColor];
 
 
 
     self.sharingDisabled = NO;
     self.showNumberOfItemsInTitle = YES;
+
+
+
 }
 
 - (void)dealloc {
@@ -88,11 +98,12 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(toggleBarsNotification:) name:kFSImageViewerToogleBarsNotificationKey object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(imageViewDidFinishLoading:) name:kFSImageViewerDidFinishedLoadingNotificationKey object:nil];
+    [self initialize];
     if ([self respondsToSelector:@selector(setAutomaticallyAdjustsScrollViewInsets:)]) {
         self.automaticallyAdjustsScrollViewInsets = NO;
     }
-
     self.view.backgroundColor = self.backgroundColorHidden;
 
     if (!_scrollView) {
@@ -111,7 +122,8 @@
         _scrollView.showsVerticalScrollIndicator = NO;
         _scrollView.showsHorizontalScrollIndicator = NO;
         _scrollView.backgroundColor = self.view.backgroundColor;
-        [self.view addSubview:_scrollView];
+        [self.view insertSubview:_scrollView atIndex:0];
+        //[self.view addSubview:_scrollView];
     }
 
     if (!_titleView) {
@@ -132,14 +144,15 @@
     }
     _titleView = titleView;
     if (_titleView) {
-        [self.view addSubview:_titleView];
+        //[self.view addSubview:_titleView];
     }
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 
-    shareButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(share:)];
+    //shareButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(share:)];
+    shareButton = [[UIBarButtonItem alloc] initWithTitle:@"保存" style:UIBarButtonItemStylePlain target:self action:@selector(save:)];
     shareButton.enabled = NO;
     if (self.presentingViewController && (self.modalPresentationStyle == UIModalPresentationFullScreen)) {
         UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:[self localizedStringForKey:@"done" withDefault:@"Done"] style:UIBarButtonItemStyleDone target:self action:@selector(done:)];
@@ -219,7 +232,7 @@
     }];
 }
 
-- (void)share:(id)sender {
+- (void)save:(id)sender {
     if ([UIActivityViewController class]) {
         id<FSImage> currentImage = _imageSource[[self currentImageIndex]];
         NSAssert(currentImage.image, @"The image must be loaded to share.");
@@ -327,7 +340,7 @@
     if(_showNumberOfItemsInTitle) {
         NSInteger numberOfImages = [_imageSource numberOfImages];
         if (numberOfImages > 1) {
-            self.navigationItem.title = [NSString stringWithFormat:@"%i %@ %li", (int)pageIndex + 1, [self localizedStringForKey:@"imageCounter" withDefault:@"of"], (long)numberOfImages];
+            self.navigationItem.title = [NSString stringWithFormat:@"%i%@%li", (int)pageIndex + 1, [self localizedStringForKey:@"imageCounter" withDefault:@"/"], (long)numberOfImages];
         } else {
             self.title = @"";
         }

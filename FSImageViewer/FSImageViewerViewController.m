@@ -136,6 +136,9 @@
         [views addObject:[NSNull null]];
     }
     self.imageViews = views;
+
+    shareButton = [[UIBarButtonItem alloc] initWithTitle:@"保存" style:UIBarButtonItemStylePlain target:self action:@selector(save:)];
+    shareButton.enabled = NO;
 }
 
 - (void) setTitleView:(UIView<FSTitleView> *)titleView {
@@ -152,8 +155,7 @@
     [super viewWillAppear:animated];
 
     //shareButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAction target:self action:@selector(share:)];
-    shareButton = [[UIBarButtonItem alloc] initWithTitle:@"保存" style:UIBarButtonItemStylePlain target:self action:@selector(save:)];
-    shareButton.enabled = NO;
+
     if (self.presentingViewController && (self.modalPresentationStyle == UIModalPresentationFullScreen)) {
         UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithTitle:[self localizedStringForKey:@"done" withDefault:@"Done"] style:UIBarButtonItemStyleDone target:self action:@selector(done:)];
         self.navigationItem.rightBarButtonItem = doneButton;
@@ -315,10 +317,10 @@
             if (barsHidden) {
                 [self setBarsHidden:NO animated:YES];
             }
-            shareButton.enabled = NO;
+            // shareButton.enabled = NO;
         }
         else {
-            shareButton.enabled = YES;
+            // shareButton.enabled = YES;
         }
         [self setViewState];
     }
@@ -375,7 +377,7 @@
         }
         else {
             if (pageIndex == [self currentImageIndex] && _imageSource[pageIndex].image) {
-                shareButton.enabled = YES;
+                //shareButton.enabled = YES;
                 if (!sameIndex && [_delegate respondsToSelector:@selector(imageViewerViewController:didMoveToImageAtIndex:)]) {
                     [_delegate imageViewerViewController:self didMoveToImageAtIndex:pageIndex];
                 }

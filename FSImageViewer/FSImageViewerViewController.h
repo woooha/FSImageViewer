@@ -95,5 +95,5 @@
 /// @param animated should the movevement animated
 - (void)moveToImageAtIndex:(NSInteger)index animated:(BOOL)animated;
 - (void)toggleBarsNotification:(NSNotification *)notification;
-
+- (void)setBarsHidden:(BOOL)hidden animated:(BOOL)animated;
 @end

@@ -277,7 +277,7 @@
     }
 
     [self setStatusBarHidden:hidden];
-    [self.navigationController setNavigationBarHidden:hidden animated:animated];
+    //[self.navigationController setNavigationBarHidden:hidden animated:animated];
 
     [UIView animateWithDuration:0.3 animations:^{
         UIColor *backgroundColor = hidden ? _backgroundColorHidden : _backgroundColorVisible;
